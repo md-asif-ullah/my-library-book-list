@@ -62,7 +62,7 @@ function AddBook() {
 
       const res = await axios.post("/api/book", formData);
 
-      if (res.data.status == 200) {
+      if (res.data.payload.length > 0) {
         toast({
           title: "Book Added",
           description: "Book has been added successfully",

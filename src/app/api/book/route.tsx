@@ -3,28 +3,35 @@ import { bookTable } from "@/db";
 import cloudinary from "@/lib/CloudinaryConfig";
 import db from "@/lib/ConnectToDB";
 import { NextRequest, NextResponse } from "next/server";
+import { bookSchema } from "@/lib/validate";
 
 export async function POST(req: Request) {
   try {
     const formData = await req.formData();
     const image = formData.get("image");
 
-    const name = formData.get("name") as string;
-    const category = formData.get("category") as string;
-    const price = formData.get("price") as string;
-    const writer = formData.get("writer") as string;
-    const rating = formData.get("rating") as string;
+    const data = {
+      name: formData.get("name"),
+      category: formData.get("category"),
+      price: formData.get("price"),
+      writer: formData.get("writer"),
+      rating: formData.get("rating"),
+    };
 
-    // Validate required fields
-    if (!name || !category || !price || !writer || !rating) {
+    // Validate input with Zod
+    const validatedData = bookSchema.safeParse(data);
+    if (!validatedData.success) {
       return NextResponse.json(
-        { message: "All fields are required and must be valid" },
+        { message: "Validation error", errors: validatedData.error.format() },
         { status: 400 }
       );
     }
 
     if (!image || !(image instanceof File)) {
-      throw new Error("Invalid image file");
+      return NextResponse.json(
+        { message: "Invalid image file" },
+        { status: 400 }
+      );
     }
 
     const buffer = await image.arrayBuffer();
@@ -39,11 +46,11 @@ export async function POST(req: Request) {
     const newBook = await db
       .insert(bookTable)
       .values({
-        name,
-        category,
-        price: Number(price),
-        writer,
-        rating: Number(rating),
+        name: validatedData.data.name,
+        category: validatedData.data.category,
+        price: Number(validatedData.data.price),
+        writer: validatedData.data.writer,
+        rating: Number(validatedData.data.rating),
         image: uploadedImage.secure_url,
       })
       .returning({ id: bookTable.id, name: bookTable.name })
@@ -103,7 +110,7 @@ export async function GET(req: NextRequest) {
     }
 
     // Explicitly type the query result
-    const books: any[] = await query.execute();
+    const books: BookType[] = await query.execute();
 
     return NextResponse.json(
       { message: "Books fetched successfully!", payload: books },
