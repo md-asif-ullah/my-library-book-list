@@ -8,8 +8,6 @@ type book = {
 function BookCard({ book }: book) {
   const { name, price, image, rating, writer } = book;
 
-  console.log(book);
-
   return (
     <div
       className={`border border-[#e2e8f0] group hover:border-[#f8a927] transition duration-300 bg-white rounded-lg p-3 cursor-pointer`}

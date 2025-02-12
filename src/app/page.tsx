@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { useToast } from "@/hooks/use-toast";
+import loginImage from "@/assets/images/login-image.jpg";
 
 const Home = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -107,7 +108,7 @@ const Home = () => {
 
         <div className="relative w-full h-screen hidden lg:block">
           <Image
-            src="/login-image.jpg"
+            src={loginImage}
             alt="Login side-image"
             fill
             priority

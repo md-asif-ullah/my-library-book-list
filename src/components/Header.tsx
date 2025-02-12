@@ -12,7 +12,7 @@ const Header = () => {
   return (
     <div className="h-20 bg-white  w-full flex justify-between items-center px-5 lg:px-10 xl:px-20 border-b border-slate-300">
       <Link href="/book">
-        <Image src="/book.png" alt="book icon" height={50} width={50} />
+        <Image src="/images/book.png" alt="book icon" height={50} width={50} />
       </Link>
       <section>
         <DropdownMenu>

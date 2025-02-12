@@ -61,7 +61,7 @@ function AddBook() {
       setLoading(true);
 
       const res = await axios.post("/api/book", formData);
-      console.log(res.data);
+
       if (res.data.status == 200) {
         toast({
           title: "Book Added",
