@@ -35,3 +35,8 @@ export const bookQuerySchema = z.object({
     .optional(),
   sort: z.enum(["asc", "desc"]).optional(),
 });
+
+export const authSchema = z.object({
+  email: z.string().email("Invalid email address"),
+  password: z.string(),
+});
