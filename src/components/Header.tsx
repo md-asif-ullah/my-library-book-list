@@ -1,3 +1,5 @@
+"use client";
+
 import Image from "next/image";
 import {
   DropdownMenu,
@@ -7,6 +9,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { CgProfile } from "react-icons/cg";
 import Link from "next/link";
+import { signOut } from "next-auth/react";
 
 const Header = () => {
   return (
@@ -25,7 +28,11 @@ const Header = () => {
             <DropdownMenuItem>
               <Link href="add-book">Add Book</Link>
             </DropdownMenuItem>
-            <DropdownMenuItem>Log out</DropdownMenuItem>
+            <DropdownMenuItem>
+              <button onClick={() => signOut({ callbackUrl: "/" })}>
+                Log Out
+              </button>
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </section>

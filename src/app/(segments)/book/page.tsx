@@ -66,7 +66,7 @@ const Book = () => {
   }, [searchParams, sortBy]);
 
   return (
-    <div className="flex bg-white h-full min-h-screen">
+    <div className="flex bg-white h-full min-h-screen pb-20">
       {/* Sidebar */}
       <div
         className={`fixed top-0 left-0 w-full lg:sticky lg:w-1/5 transition-transform lg:transform-none transform ${
