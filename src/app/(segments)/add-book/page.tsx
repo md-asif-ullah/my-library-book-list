@@ -6,22 +6,14 @@ import { useForm } from "react-hook-form";
 import { ImCross } from "react-icons/im";
 import Image from "next/image";
 import { useToast } from "@/hooks/use-toast";
-import { categoryText } from "../book/page";
 import CustomForm, { FormFieldTypes } from "@/components/custom-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Form } from "@/components/ui/form";
 import ProssingAnimation from "@/components/prossing-animation";
 import axios from "axios";
-
-export const formSchema = z.object({
-  name: z.string().min(1, "Book name is required"),
-  category: z.string().min(1, "Category is required"),
-  price: z.string().min(1, "Price must be a positive number"),
-  writer: z.string().min(1, "Writer's name is required"),
-  rating: z.string().min(1, "Rating is required"),
-  image: z.any().refine((file) => file?.length > 0, "Image is required"),
-});
+import { formSchema } from "@/lib/validate";
+import { categoryText } from "@/lib/utils";
 
 function AddBook() {
   const [image, setImage] = useState("");

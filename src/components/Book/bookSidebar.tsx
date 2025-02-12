@@ -1,6 +1,7 @@
 "use client";
 
 import { Checkbox } from "@/components/ui/checkbox";
+import { categoryText } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 import { Dispatch, SetStateAction, useEffect } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
@@ -12,7 +13,6 @@ interface IFormInput {
   maxPrice: string;
 }
 interface Props {
-  categoryText: string[];
   setMobileFilter: (value: boolean) => void;
   searchParams: {
     category: string;
@@ -32,7 +32,6 @@ interface Props {
 }
 
 function BookSidebar({
-  categoryText,
   setSearchParams,
   searchParams,
   setMobileFilter,

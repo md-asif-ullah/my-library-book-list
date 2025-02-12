@@ -13,13 +13,6 @@ import {
 import axios from "axios";
 import { useEffect, useState } from "react";
 
-export const categoryText: string[] = [
-  "programming",
-  "history",
-  "language",
-  "islamic",
-];
-
 const Book = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isError, setIsError] = useState(null);
@@ -81,7 +74,6 @@ const Book = () => {
         }`}
       >
         <BookSidebar
-          categoryText={categoryText}
           setMobileFilter={setMobileFilter}
           setSearchParams={setSearchParams}
           searchParams={searchParams}
