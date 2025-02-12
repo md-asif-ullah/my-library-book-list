@@ -142,9 +142,9 @@ const Book = () => {
         ) : isError ? (
           "Something went wrong! Please try again."
         ) : (
-          <div className="grid xl:grid-cols-4 lg:grid-cols-2 lg:ml-20 md:grid-cols-2 gap-5 mt-10">
-            {books?.map((product: any, index) => (
-              <BookCard key={index} product={product} />
+          <div className="grid xl:grid-cols-4 lg:ml-20 md:grid-cols-2 gap-5 mt-10">
+            {books?.map((book: BookType) => (
+              <BookCard key={book.id} book={book} />
             ))}
           </div>
         )}
