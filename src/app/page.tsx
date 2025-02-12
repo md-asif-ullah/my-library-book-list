@@ -4,7 +4,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { signIn } from "next-auth/react";
-import toast from "react-hot-toast";
+import { useToast } from "@/hooks/use-toast";
 
 const Home = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -12,8 +12,9 @@ const Home = () => {
   const [password, setPassword] = useState("12345678");
 
   const router = useRouter();
+  const { toast } = useToast();
 
-  const handleSingUp = async (e) => {
+  const handleSingUp = async (e: React.FormEvent) => {
     e.preventDefault();
     const result = await signIn("credentials", {
       redirect: false,
@@ -22,8 +23,11 @@ const Home = () => {
     });
 
     if (result?.error) {
-      console.log(result.error);
-      toast("invalid email or password");
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "invalid email or password",
+      });
     } else {
       router.push("/book");
     }
