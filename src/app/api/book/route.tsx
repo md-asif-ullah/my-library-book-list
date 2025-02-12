@@ -3,7 +3,7 @@ import { bookTable } from "@/db";
 import cloudinary from "@/lib/CloudinaryConfig";
 import db from "@/lib/ConnectToDB";
 import { NextRequest, NextResponse } from "next/server";
-import { bookSchema } from "@/lib/validate";
+import { bookQuerySchema, bookSchema } from "@/lib/validate";
 
 export async function POST(req: Request) {
   try {
@@ -34,6 +34,7 @@ export async function POST(req: Request) {
       );
     }
 
+    // convert for bufferString and upload in cloudinary
     const buffer = await image.arrayBuffer();
     const base64Image = Buffer.from(buffer).toString("base64");
 
@@ -71,31 +72,42 @@ export async function POST(req: Request) {
 export async function GET(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url);
-    const category = searchParams.get("category");
-    const minPrice = parseFloat(searchParams.get("minPrice") || "0");
-    const maxPrice = searchParams.get("maxPrice")
-      ? parseFloat(searchParams.get("maxPrice")!)
-      : undefined;
-    const rating = searchParams.get("rating")
-      ? parseFloat(searchParams.get("rating")!)
-      : undefined;
-    const sort = searchParams.get("sort");
+
+    // Convert search params to an object
+    const queryParams = Object.fromEntries(searchParams.entries());
+
+    // Validate query params
+    const validatedQuery = bookQuerySchema.safeParse(queryParams);
+    if (!validatedQuery.success) {
+      return NextResponse.json(
+        { message: "Validation error", errors: validatedQuery.error.format() },
+        { status: 400 }
+      );
+    }
+
+    const { category, minPrice, maxPrice, rating, sort } = validatedQuery.data;
+
+    const parsedMinPrice = minPrice ? parseFloat(minPrice) : 0;
+    const parsedMaxPrice = maxPrice ? parseFloat(maxPrice) : undefined;
+    const parsedRating = rating ? parseFloat(rating) : undefined;
 
     // Base query
     let query: any = db.select().from(bookTable);
-
     const whereConditions = [];
 
     if (category) whereConditions.push(eq(bookTable.category, category));
-    if (rating !== undefined)
-      whereConditions.push(gte(bookTable.rating, rating));
+    if (parsedRating !== undefined)
+      whereConditions.push(gte(bookTable.rating, parsedRating));
 
-    if (maxPrice !== undefined) {
+    if (parsedMaxPrice !== undefined) {
       whereConditions.push(
-        and(gte(bookTable.price, minPrice), lte(bookTable.price, maxPrice))
+        and(
+          gte(bookTable.price, parsedMinPrice),
+          lte(bookTable.price, parsedMaxPrice)
+        )
       );
     } else {
-      whereConditions.push(gte(bookTable.price, minPrice));
+      whereConditions.push(gte(bookTable.price, parsedMinPrice));
     }
 
     if (whereConditions.length > 0) {
@@ -109,8 +121,8 @@ export async function GET(req: NextRequest) {
       query = query.orderBy(desc(bookTable.price));
     }
 
-    // Explicitly type the query result
-    const books: BookType[] = await query.execute();
+    // Execute query
+    const books = await query.execute();
 
     return NextResponse.json(
       { message: "Books fetched successfully!", payload: books },
